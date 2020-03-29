@@ -1,12 +1,22 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+    <div v-if="showLoader" class="loader">
+      <p>Fetching Data</p>
     </div>
     <router-view/>
   </div>
 </template>
+
+<script>
+import Table from '@/components/Table.vue';
+import { mapState } from 'vuex';
+
+export default {
+  computed: mapState({
+    showLoader: state => state.showLoader,
+  }),
+}
+</script>
 
 <style lang="scss">
 #app {
@@ -17,16 +27,41 @@
   color: #2c3e50;
 }
 
-#nav {
-  padding: 30px;
+.row {
+  display: flex;
+  align-items: center;
+}
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
+.justify-space-around {
+  justify-content: space-around;
+}
 
-    &.router-link-exact-active {
-      color: #42b983;
-    }
+.heading {
+  font-weight: bold;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+a {
+  text-decoration: none;
+  color: #2c3e50;
+
+  &:hover {
+    opacity: 0.5;
   }
+}
+
+.loader {
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  background-color: black;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.9;
 }
 </style>
