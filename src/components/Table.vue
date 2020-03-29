@@ -1,5 +1,8 @@
 <template>
   <div class="table">
+    <div class="search row">
+      <input placeholder="Search Fund By Name" type="text" v-model="searchTerm">
+    </div>
     <div class="row justify-space-around headings">
       <div 
         class="row" 
@@ -26,16 +29,18 @@
         </p>
       </div>
     </div>
-    <div 
-      class="row justify-space-around data-rows" 
-      v-for="data in localTableData" 
-      :key="data.code">
-        <div v-for="heading in localHeadingsConfig" :key="heading.key">
-          <router-link v-if="heading.isLink" :to="data[heading.linkTo]">{{data[heading.key]}}</router-link>
-          <p v-else>
-            {{data[heading.key]}}
-          </p>
-        </div>
+    <div class="data-rows">
+      <div 
+        class="row justify-space-around data-row" 
+        v-for="data in filteredLocalTableData" 
+        :key="data.code">
+          <div v-for="heading in localHeadingsConfig" :key="heading.key">
+            <router-link v-if="heading.isLink" :to="data[heading.linkTo]">{{data[heading.key]}}</router-link>
+            <p v-else>
+              {{data[heading.key]}}
+            </p>
+          </div>
+      </div>
     </div>
   </div>
 </template>
@@ -47,7 +52,8 @@ export default {
     return {
       localHeadingsConfig: [],
       localTableData: [],
-      currentSortedColumnIndex: -1
+      currentSortedColumnIndex: -1,
+      searchTerm: "",
     }
   },
   props: {
@@ -58,6 +64,17 @@ export default {
     tableData: {
       type: Array,
       required: true,
+    }
+  },
+  computed: {
+    filteredLocalTableData() {
+      if (this.searchTerm) {
+        return this.localTableData.filter(row => 
+          row.name.toLowerCase().includes(this.searchTerm.toLowerCase())
+        );
+      }
+
+      return this.localTableData;
     }
   },
   watch: {
@@ -116,7 +133,12 @@ export default {
     font-size: 20px;
   }
 
-  .headings > *, .data-rows > * {
+  .data-rows {
+    max-height: 800px;
+    overflow: scroll;
+  }
+
+  .headings > *, .data-row > * {
     width: 200px;
     text-align: center;
   }
@@ -129,6 +151,19 @@ export default {
     margin-left: 3px;
     cursor: pointer;
     font-size: 12px;
+  }
+
+  .search {
+    justify-content: end;
+    margin-right: 10px;
+
+    input {
+      width: 200px;
+      padding: 10px;
+      border: 1px solid;
+      border-radius: 3px;
+      font-size: 12px;
+    }
   }
 }
 </style>
